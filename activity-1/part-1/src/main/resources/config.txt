@@ -1,0 +1,2 @@
+ma.enset.dao.impl.DaoImplVersion2
+ma.enset.service.impl.IServiceImpl
