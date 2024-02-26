@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
 public class FieldInjector implements Injector{
 

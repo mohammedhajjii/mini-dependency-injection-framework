@@ -3,30 +3,22 @@ package ma.enset.converters;
 import ma.enset.annotation.Bean;
 import ma.enset.annotation.Component;
 import ma.enset.annotation.Inject;
-import ma.enset.annotation.Prefer;
 import ma.enset.dependencies.Dependencies;
 import ma.enset.initializers.*;
-import ma.enset.injectors.FieldInjector;
 import ma.enset.injectors.Injector;
 import ma.enset.injectors.Injectors;
-import ma.enset.injectors.SetterInjector;
 import ma.enset.resolvers.BeanNameResolver;
 import ma.enset.resolvers.BeanResolver;
-import ma.enset.resolvers.BeanTypeResolver;
-import ma.enset.dependencies.BeanNameDependency;
-import ma.enset.dependencies.BeanTypeDependency;
 import ma.enset.dependencies.Dependency;
 import ma.enset.scanner.DetectedBean;
 import java.beans.Introspector;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Converters {
 
@@ -40,7 +32,6 @@ public class Converters {
                 .injectorSet(Set.of())
                 .build();
 
-
     }
 
     public static DetectedBean componentClassToDetectedBean(Class<?> componentClass) throws NoSuchMethodException {
@@ -51,7 +42,6 @@ public class Converters {
             default -> annotationValue;
         };
 
-        System.out.println("1 --- ");
         Constructor<?> annotatedConstructor = Arrays.stream(componentClass.getConstructors())
                 .filter(cst -> cst.isAnnotationPresent(Inject.class))
                 .findFirst()
@@ -62,7 +52,6 @@ public class Converters {
                         throw new RuntimeException(e);
                     }
                 });
-        System.out.println("2 --- ");
 
         if (annotatedConstructor.getParameterCount() > 0){
             return DetectedBean.builder()
@@ -106,7 +95,7 @@ public class Converters {
         };
 
         Set<Dependency> dependencySet = new HashSet<>();
-        dependencySet.add(Dependencies.resolveDependencyFrom(instanceResolver));
+        dependencySet.add(Dependencies.resolveDependencyFromBeanResolver(instanceResolver));
 
         if (beanMethod.getParameterCount() > 0){
             dependencySet.addAll(Dependencies.resolveDependenciesFromMethod(beanMethod));

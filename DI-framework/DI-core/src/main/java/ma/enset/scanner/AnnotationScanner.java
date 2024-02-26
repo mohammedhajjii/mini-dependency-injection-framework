@@ -61,7 +61,6 @@ public class AnnotationScanner implements Scanner{
                     try {
                         return Converters.componentClassToDetectedBean(component);
                     } catch (NoSuchMethodException e) {
-                        System.out.println("scanner.component scan: " + e.getMessage());
                         return null;
                     }
                 })

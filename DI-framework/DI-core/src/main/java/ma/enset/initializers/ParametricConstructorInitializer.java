@@ -16,11 +16,12 @@ public class ParametricConstructorInitializer extends ParametricInitializer{
     private Constructor<?> constructor;
     @Override
     public Object initialize() throws ReflectiveOperationException {
-        Object[] params = this.getParameters()
-                .stream()
-                .map(BeanResolver::resolve)
-                .toArray();
-        return constructor.newInstance(params);
+        return constructor.newInstance(
+                this.getParameters()
+                        .stream()
+                        .map(BeanResolver::resolve)
+                        .toArray()
+        );
 
     }
 }

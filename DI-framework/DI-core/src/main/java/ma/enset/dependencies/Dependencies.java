@@ -12,7 +12,6 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Dependencies {
 
@@ -53,7 +52,7 @@ public class Dependencies {
                 }).collect(Collectors.toSet());
     }
 
-    public static Dependency resolveDependencyFrom(BeanResolver beanResolver){
+    public static Dependency resolveDependencyFromBeanResolver(BeanResolver beanResolver){
         if (beanResolver instanceof BeanNameResolver resolver)
             return new BeanNameDependency(resolver.getName());
         return new BeanTypeDependency(((BeanTypeResolver) beanResolver).getType());
