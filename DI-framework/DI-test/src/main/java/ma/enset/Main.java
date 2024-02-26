@@ -13,29 +13,20 @@ public class Main {
         AnnotationStrategy annotationStrategy = new AnnotationStrategy("ma.enset");
         annotationStrategy.apply();
 
-        System.out.println(Context.INSTANCE.getContext());
-        System.out.println("------------------------------");
+
 
         IMetier iMetier = (IMetier) new BeanTypeResolver(IMetier.class).resolve();
 
         System.out.println("data: " + iMetier.calculate());
 
 
+        System.out.println(double.class.isAssignableFrom(double.class));
+
 
     }
 }
 
 
-@Data
-class User{
-    private String name;
-    private int age;
-
-    public User(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-}
 
 
 

@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
 public class SetterInjector implements Injector{
     private Method setter;

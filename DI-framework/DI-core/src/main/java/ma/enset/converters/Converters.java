@@ -23,24 +23,26 @@ import java.util.stream.Collectors;
 public class Converters {
 
 
-    public static DetectedBean beanFactoryClassToDetectedBean(Class<?> beanFactoryClass) throws NoSuchMethodException {
+    public static DetectedBean beanFactoryClassToDetectedBean(Class<?> beanFactoryClass){
 
-        return DetectedBean.builder()
-                .specifiedName(Introspector.decapitalize(beanFactoryClass.getSimpleName()))
-                .initializer(new SimpleConstructorInitializer(beanFactoryClass.getConstructor()))
-                .dependencySet(Set.of())
-                .injectorSet(Set.of())
-                .build();
+        try {
+            return DetectedBean.builder()
+                    .specifiedName(Introspector.decapitalize(beanFactoryClass.getSimpleName()))
+                    .initializer(new SimpleConstructorInitializer(beanFactoryClass.getConstructor()))
+                    .dependencySet(Set.of())
+                    .injectorSet(Set.of())
+                    .build();
+        }catch (NoSuchMethodException exception){
+            throw new RuntimeException(exception);
+        }
+
 
     }
 
-    public static DetectedBean componentClassToDetectedBean(Class<?> componentClass) throws NoSuchMethodException {
+    public static DetectedBean componentClassToDetectedBean(Class<?> componentClass) {
 
         String annotationValue = componentClass.getAnnotation(Component.class).value();
-        String specifiedName = switch (annotationValue){
-            case "" -> Introspector.decapitalize(componentClass.getSimpleName());
-            default -> annotationValue;
-        };
+        String specifiedName = annotationValue.isBlank() ?  Introspector.decapitalize(componentClass.getSimpleName()) : annotationValue;
 
         Constructor<?> annotatedConstructor = Arrays.stream(componentClass.getConstructors())
                 .filter(cst -> cst.isAnnotationPresent(Inject.class))
@@ -89,10 +91,7 @@ public class Converters {
     public static DetectedBean beanMethodToDetectedBean(Method beanMethod, BeanResolver instanceResolver){
 
         String annotationValue = beanMethod.getAnnotation(Bean.class).value();
-        String specifiedName = switch (annotationValue){
-            case "" -> beanMethod.getName();
-            default -> annotationValue;
-        };
+        String specifiedName = annotationValue.isBlank() ? beanMethod.getName() : annotationValue;
 
         Set<Dependency> dependencySet = new HashSet<>();
         dependencySet.add(Dependencies.resolveDependencyFromBeanResolver(instanceResolver));

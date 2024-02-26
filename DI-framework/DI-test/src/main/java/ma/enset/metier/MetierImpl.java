@@ -9,14 +9,17 @@ import ma.enset.dao.IDao;
 public class MetierImpl implements IMetier{
 
     private IDao dao;
+    @Inject
+    @Prefer("tf")
+    private Double temp;
 
     @Inject
-    public void setDao(@Prefer("dao1") IDao dao){
+    public void setDao(@Prefer("dao2") IDao dao){
         this.dao = dao;
     }
 
     @Override
     public double calculate() {
-        return dao.getData() * 23;
+        return dao.getData() * temp;
     }
 }

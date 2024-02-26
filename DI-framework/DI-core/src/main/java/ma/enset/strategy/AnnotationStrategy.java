@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 public class AnnotationStrategy implements InjectionStrategy{
 
     private final Scanner scanner;
-    private final ExecutorService workers = Executors.newFixedThreadPool(3);
 
     public AnnotationStrategy(String ...forPackages) {
         this.scanner = new AnnotationScanner(forPackages);
@@ -23,20 +22,18 @@ public class AnnotationStrategy implements InjectionStrategy{
     public void apply() throws Exception {
         Set<DetectedBean> detectedBeanSet = scanner.scan();
 
-        System.out.println(detectedBeanSet);
         int oldSize = 0;
         while (Context.INSTANCE.getContext().size() != detectedBeanSet.size()){
             detectedBeanSet.stream()
                     .filter(detectedBean -> detectedBean.getDependencySet()
                             .stream()
                             .allMatch(Dependency::isSatisfied)
-                    )
-                    .forEach(detectedBean ->  {
+                    ).forEach(detectedBean ->  {
                         try {
                             Object bean = detectedBean.getInitializer().initialize();
                             Context.INSTANCE.getContext().put(detectedBean.getSpecifiedName(), bean);
-                        }catch (Exception exception){
-                            exception.printStackTrace();
+                        }catch (ReflectiveOperationException exception){
+                            throw new RuntimeException(exception);
                         }
                     });
             if (oldSize == Context.INSTANCE.getContext().size())
@@ -49,8 +46,8 @@ public class AnnotationStrategy implements InjectionStrategy{
                             .forEach(injector -> {
                                 try {
                                     injector.inject();
-                                } catch (ReflectiveOperationException e) {
-                                    System.out.println("exception: " + e.getMessage());
+                                } catch (ReflectiveOperationException exception) {
+                                   throw new RuntimeException(exception);
                                 }
                             });
                 });

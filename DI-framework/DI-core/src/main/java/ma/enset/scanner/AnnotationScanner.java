@@ -47,24 +47,12 @@ public class AnnotationScanner implements Scanner{
 
 
        Set<DetectedBean>  detectedBeanSet = beansFactorySet.stream()
-               .map(factory -> {
-                       try {
-                           return Converters.beanFactoryClassToDetectedBean(factory);
-                       } catch (NoSuchMethodException ignored) {
-                           return null;
-                       }
-               }).collect(Collectors.toSet());
+               .map(Converters::beanFactoryClassToDetectedBean)
+               .collect(Collectors.toSet());
 
         Set<DetectedBean> detectedCompoenentSet = reflection.getTypesAnnotatedWith(Component.class)
                 .stream()
-                .map(component -> {
-                    try {
-                        return Converters.componentClassToDetectedBean(component);
-                    } catch (NoSuchMethodException e) {
-                        return null;
-                    }
-                })
-                .collect(Collectors.toSet());
+                .map(Converters::componentClassToDetectedBean).collect(Collectors.toSet());
 
        detectedBeanSet.addAll(detectedBeanMethodSet);
        detectedBeanSet.addAll(detectedCompoenentSet);
