@@ -11,11 +11,11 @@ import ma.enset.resolvers.BeanResolver;
 import ma.enset.scanner.DetectedBean;
 import java.beans.Introspector;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Converters {
 
@@ -31,7 +31,6 @@ public class Converters {
         }catch (NoSuchMethodException exception){
             throw new RuntimeException(exception);
         }
-
 
     }
 
@@ -61,20 +60,19 @@ public class Converters {
         if (annotatedConstructor.getParameterCount() > 0)
             return detectedBean;
 
-
-        Set<Field> annotatedFields = Arrays.stream(componentClass.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Inject.class))
-                .collect(Collectors.toSet());
-
-        Set<Method> annotatedSetters = Arrays.stream(componentClass.getDeclaredMethods())
-                .filter(setter -> setter.isAnnotationPresent(Inject.class))
-                .collect(Collectors.toSet());
-
         BeanResolver instanceResolver = new BeanNameResolver(specifiedName);
-        Set<Injector> injectorSet = Injectors.resolveInjectorsFromFields(annotatedFields, instanceResolver);
-        injectorSet.addAll(Injectors.resolveInjectorsFromSetters(annotatedSetters, instanceResolver));
+        Stream<Injector> injectorStream = Stream.concat(
+                Arrays.stream(componentClass.getDeclaredFields())
+                        .filter(field -> field.isAnnotationPresent(Inject.class))
+                        .map(field -> Injectors.resolveInjectorsFromField(field, instanceResolver))
+                ,
+                Arrays.stream(componentClass.getDeclaredMethods())
+                        .filter(setter -> setter.isAnnotationPresent(Inject.class))
+                        .map(setter -> Injectors.resolveInjectorsFromSetter(setter, instanceResolver))
+        );
 
-        detectedBean.setInjectorSet(injectorSet);
+
+        detectedBean.setInjectorSet(injectorStream.collect(Collectors.toSet()));
 
         return detectedBean;
     }
