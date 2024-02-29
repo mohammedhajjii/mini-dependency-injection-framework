@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 @Getter @Setter
 @AllArgsConstructor
@@ -13,7 +14,16 @@ public class SimpleConstructorInitializer extends SimpleInitializer{
 
     private Constructor<?> constructor;
     @Override
-    public Object initialize() throws ReflectiveOperationException {
-        return constructor.newInstance();
+    public Object initialize() {
+        try {
+            return constructor.newInstance();
+        } catch (ReflectiveOperationException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    public boolean areAllDependenciesSatisfied() {
+        return true;
     }
 }

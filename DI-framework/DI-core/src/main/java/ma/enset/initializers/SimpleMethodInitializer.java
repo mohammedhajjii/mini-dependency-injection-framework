@@ -17,7 +17,16 @@ public class SimpleMethodInitializer extends SimpleInitializer{
     private BeanResolver instance;
 
     @Override
-    public Object initialize() throws ReflectiveOperationException {
-        return init.invoke(instance.resolve());
+    public Object initialize() {
+        try {
+            return init.invoke(instance.resolve());
+        }catch (ReflectiveOperationException exception){
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    public boolean areAllDependenciesSatisfied() {
+        return instance.isSatisfied();
     }
 }

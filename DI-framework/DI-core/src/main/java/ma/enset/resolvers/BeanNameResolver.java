@@ -15,4 +15,11 @@ public class BeanNameResolver implements BeanResolver {
     public Object resolve()  {
         return Context.INSTANCE.getContext().get(name);
     }
+
+    @Override
+    public boolean isSatisfied() {
+        return Context.INSTANCE
+                .getContext()
+                .containsKey(name);
+    }
 }

@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.enset.initializers.Initializer;
 import ma.enset.injectors.Injector;
-import ma.enset.dependencies.Dependency;
-
 import java.util.Set;
 
 @Data
@@ -17,6 +15,5 @@ import java.util.Set;
 public class DetectedBean {
     private String specifiedName;
     private Initializer initializer;
-    private Set<Dependency> dependencySet;
     private Set<Injector> injectorSet;
 }

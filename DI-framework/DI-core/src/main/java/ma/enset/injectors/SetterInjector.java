@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.enset.resolvers.BeanResolver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -19,7 +20,11 @@ public class SetterInjector implements Injector{
 
 
     @Override
-    public void inject() throws ReflectiveOperationException {
-        setter.invoke(instance.resolve(), parameter.resolve());
+    public void inject() {
+        try {
+            setter.invoke(instance.resolve(), parameter.resolve());
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

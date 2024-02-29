@@ -18,8 +18,12 @@ public class FieldInjector implements Injector{
 
 
     @Override
-    public void inject() throws ReflectiveOperationException {
+    public void inject()  {
         field.setAccessible(true);
-        field.set(instance.resolve(), injectedValue.resolve());
+        try {
+            field.set(instance.resolve(), injectedValue.resolve());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

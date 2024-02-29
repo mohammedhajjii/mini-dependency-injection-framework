@@ -16,13 +16,24 @@ public class ParametricMethodInitializer extends ParametricInitializer{
     private BeanResolver instance;
 
     @Override
-    public Object initialize() throws ReflectiveOperationException {
-        return init.invoke(
-                instance.resolve(),
-                this.getParameters()
-                        .stream()
-                        .map(BeanResolver::resolve)
-                        .toArray()
-        );
+    public Object initialize() {
+        try {
+            return init.invoke(
+                    instance.resolve(),
+                    this.getParameters()
+                            .stream()
+                            .map(BeanResolver::resolve)
+                            .toArray()
+            );
+        }catch (ReflectiveOperationException exception){
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    public boolean areAllDependenciesSatisfied() {
+        return this.getParameters().stream()
+                .allMatch(BeanResolver::isSatisfied)
+                && instance.isSatisfied();
     }
 }

@@ -21,4 +21,12 @@ public class BeanTypeResolver implements BeanResolver{
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public boolean isSatisfied() {
+        return Context.INSTANCE.getContext()
+                .values()
+                .stream()
+                .anyMatch(obj -> type.isAssignableFrom(obj.getClass()));
+    }
 }

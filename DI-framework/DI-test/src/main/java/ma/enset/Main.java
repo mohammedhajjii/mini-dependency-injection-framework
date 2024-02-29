@@ -7,8 +7,13 @@ import ma.enset.repo.Context;
 import ma.enset.resolvers.BeanTypeResolver;
 import ma.enset.strategy.AnnotationStrategy;
 
+import java.sql.Time;
+import java.time.LocalDate;
+import java.util.Date;
+
 public class Main {
     public static void main(String[] args) throws Exception {
+
 
         AnnotationStrategy annotationStrategy = new AnnotationStrategy("ma.enset");
         annotationStrategy.apply();
@@ -18,9 +23,6 @@ public class Main {
         IMetier iMetier = (IMetier) new BeanTypeResolver(IMetier.class).resolve();
 
         System.out.println("data: " + iMetier.calculate());
-
-
-        System.out.println(double.class.isAssignableFrom(double.class));
 
 
     }

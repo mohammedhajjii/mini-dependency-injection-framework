@@ -7,14 +7,14 @@ import ma.enset.dao.IDao;
 
 @Component
 public class MetierImpl implements IMetier{
-
+    @Inject
+    @Prefer("dao1")
     private IDao dao;
     @Inject
     @Prefer("tf")
     private Double temp;
 
-    @Inject
-    public void setDao(@Prefer("dao2") IDao dao){
+    public void setDao( IDao dao){
         this.dao = dao;
     }
 

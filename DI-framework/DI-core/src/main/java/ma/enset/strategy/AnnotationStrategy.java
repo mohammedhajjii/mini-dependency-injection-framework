@@ -1,55 +1,44 @@
 package ma.enset.strategy;
 
-import ma.enset.dependencies.Dependency;
+import ma.enset.injectors.Injector;
 import ma.enset.repo.Context;
 import ma.enset.scanner.AnnotationScanner;
 import ma.enset.scanner.DetectedBean;
 import ma.enset.scanner.Scanner;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AnnotationStrategy implements InjectionStrategy{
 
-    private final Scanner scanner;
+    private final Scanner annotationScanner;
 
     public AnnotationStrategy(String ...forPackages) {
-        this.scanner = new AnnotationScanner(forPackages);
+        this.annotationScanner = new AnnotationScanner(forPackages);
     }
 
     @Override
     public void apply() throws Exception {
-        Set<DetectedBean> detectedBeanSet = scanner.scan();
+        Set<DetectedBean> detectedBeanSet = annotationScanner.scan();
 
-        int oldSize = 0;
+        int oldSize;
         while (Context.INSTANCE.getContext().size() != detectedBeanSet.size()){
+            oldSize = Context.INSTANCE.getContext().size();
+
             detectedBeanSet.stream()
-                    .filter(detectedBean -> detectedBean.getDependencySet()
-                            .stream()
-                            .allMatch(Dependency::isSatisfied)
-                    ).forEach(detectedBean ->  {
-                        try {
-                            Object bean = detectedBean.getInitializer().initialize();
-                            Context.INSTANCE.getContext().put(detectedBean.getSpecifiedName(), bean);
-                        }catch (ReflectiveOperationException exception){
-                            throw new RuntimeException(exception);
-                        }
+                    .filter(detectedBean -> detectedBean.getInitializer().areAllDependenciesSatisfied())
+                    .forEach(detectedBean ->  {
+                        Object bean = detectedBean.getInitializer().initialize();
+                        Context.INSTANCE.getContext().put(detectedBean.getSpecifiedName(), bean);
                     });
+
             if (oldSize == Context.INSTANCE.getContext().size())
-                throw new Exception("detected cycle");
+                throw new RuntimeException("detected cycle");
         }
         detectedBeanSet.stream()
                 .filter(detectedBean -> !detectedBean.getInjectorSet().isEmpty())
                 .forEach(detectedBean -> {
                     detectedBean.getInjectorSet()
-                            .forEach(injector -> {
-                                try {
-                                    injector.inject();
-                                } catch (ReflectiveOperationException exception) {
-                                   throw new RuntimeException(exception);
-                                }
-                            });
+                            .forEach(Injector::inject);
                 });
 
 
