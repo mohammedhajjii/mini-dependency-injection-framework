@@ -11,7 +11,7 @@ public class MetierImpl implements IMetier{
     @Prefer("dao2")
     private IDao dao;
     @Inject
-    @Prefer("th")
+    @Prefer("ti")
     private Double temp;
 
     public void setDao( IDao dao){
