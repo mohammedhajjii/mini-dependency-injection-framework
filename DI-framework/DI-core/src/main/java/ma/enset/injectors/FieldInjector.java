@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import ma.enset.resolvers.BeanResolver;
+import ma.enset.resolvers.UnresolvedBean;
+import ma.enset.resolvers.UnresolvedBeans;
+
 import java.lang.reflect.Field;
 
 @Getter
@@ -30,5 +33,16 @@ public class FieldInjector implements Injector{
     @Override
     public boolean canBeInjected() {
         return instance.canBeResolved() && injectedValue.canBeResolved();
+    }
+
+    @Override
+    public UnresolvedBean findFirstUnresolvedBean() {
+        if (!instance.canBeResolved())
+            return UnresolvedBeans.from(instance);
+
+        if (!injectedValue.canBeResolved())
+            return UnresolvedBeans.from(injectedValue);
+
+        return null;
     }
 }

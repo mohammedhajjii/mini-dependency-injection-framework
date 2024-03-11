@@ -2,9 +2,13 @@ package ma.enset.strategies;
 
 import ma.enset.injectors.Injector;
 import ma.enset.repo.Context;
+import ma.enset.resolvers.UnresolvedBean;
+import ma.enset.resolvers.UnresolvedBeanException;
 import ma.enset.scanners.AnnotationScanner;
 import ma.enset.scanners.DetectedBean;
 import ma.enset.scanners.Scanner;
+
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -36,12 +40,14 @@ public class AnnotationStrategy implements InjectionStrategy{
             oldSize = Context.INSTANCE.size();
         }
 
-        boolean someDependenciesMissed = detectedBeanSet.stream()
+        Optional<UnresolvedBean> unresolvedBean = detectedBeanSet.stream()
                 .flatMap(detectedBean -> detectedBean.getInjectorSet().stream())
-                .anyMatch(injector -> !injector.canBeInjected());
+                .filter(injector -> !injector.canBeInjected())
+                .map(Injector::findFirstUnresolvedBean)
+                .findFirst();
 
-        if (someDependenciesMissed){
-            throw new RuntimeException("some bean cannot be resolved");
+        if (unresolvedBean.isPresent()){
+            throw new UnresolvedBeanException(unresolvedBean.get());
         }
 
         detectedBeanSet.stream()
