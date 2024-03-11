@@ -4,6 +4,7 @@ package ma.enset.injectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import ma.enset.resolvers.BeanResolver;
 import java.lang.reflect.Field;
 
@@ -17,13 +18,17 @@ public class FieldInjector implements Injector{
     private BeanResolver injectedValue;
 
 
+
     @Override
+    @SneakyThrows(IllegalAccessException.class)
     public void inject()  {
         field.setAccessible(true);
-        try {
-            field.set(instance.resolve(), injectedValue.resolve());
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        field.set(instance.resolve(), injectedValue.resolve());
+
+    }
+
+    @Override
+    public boolean canBeInjected() {
+        return instance.canBeResolved() && injectedValue.canBeResolved();
     }
 }

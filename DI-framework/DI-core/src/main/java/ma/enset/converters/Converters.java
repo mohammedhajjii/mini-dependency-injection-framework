@@ -1,5 +1,6 @@
 package ma.enset.converters;
 
+import lombok.SneakyThrows;
 import ma.enset.annotation.Bean;
 import ma.enset.annotation.Component;
 import ma.enset.annotation.Inject;
@@ -8,7 +9,7 @@ import ma.enset.injectors.Injector;
 import ma.enset.injectors.Injectors;
 import ma.enset.resolvers.BeanNameResolver;
 import ma.enset.resolvers.BeanResolver;
-import ma.enset.scanner.DetectedBean;
+import ma.enset.scanners.DetectedBean;
 import java.beans.Introspector;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -20,17 +21,14 @@ import java.util.stream.Stream;
 public class Converters {
 
 
+    @SneakyThrows(NoSuchMethodException.class)
     public static DetectedBean beanFactoryClassToDetectedBean(Class<?> beanFactoryClass){
 
-        try {
-            return DetectedBean.builder()
-                    .specifiedName(Introspector.decapitalize(beanFactoryClass.getSimpleName()))
-                    .initializer(new SimpleConstructorInitializer(beanFactoryClass.getConstructor()))
-                    .injectorSet(Set.of())
-                    .build();
-        }catch (NoSuchMethodException exception){
-            throw new RuntimeException(exception);
-        }
+        return DetectedBean.builder()
+                .specifiedName(Introspector.decapitalize(beanFactoryClass.getSimpleName()))
+                .initializer(new SimpleConstructorInitializer(beanFactoryClass.getConstructor()))
+                .injectorSet(Set.of())
+                .build();
 
     }
 

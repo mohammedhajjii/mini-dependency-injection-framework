@@ -1,9 +1,6 @@
 package ma.enset.initializers;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ma.enset.resolvers.BeanResolver;
 
 import java.lang.reflect.Method;
@@ -17,16 +14,13 @@ public class SimpleMethodInitializer extends SimpleInitializer{
     private BeanResolver instance;
 
     @Override
+    @SneakyThrows(ReflectiveOperationException.class)
     public Object initialize() {
-        try {
-            return init.invoke(instance.resolve());
-        }catch (ReflectiveOperationException exception){
-            throw new RuntimeException(exception);
-        }
+        return init.invoke(instance.resolve());
     }
 
     @Override
-    public boolean areAllDependenciesSatisfied() {
-        return instance.isSatisfied();
+    public boolean canBeInitialized() {
+        return instance.canBeResolved();
     }
 }

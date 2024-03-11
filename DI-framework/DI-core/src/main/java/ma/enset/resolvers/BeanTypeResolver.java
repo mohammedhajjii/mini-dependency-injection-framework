@@ -14,19 +14,11 @@ public class BeanTypeResolver implements BeanResolver{
 
     @Override
     public Object resolve() {
-        return Context.INSTANCE.getContext()
-                .values()
-                .stream()
-                .filter(obj -> type.isAssignableFrom(obj.getClass()))
-                .findFirst()
-                .orElse(null);
+        return Context.INSTANCE.getBean(type);
     }
 
     @Override
-    public boolean isSatisfied() {
-        return Context.INSTANCE.getContext()
-                .values()
-                .stream()
-                .anyMatch(obj -> type.isAssignableFrom(obj.getClass()));
+    public boolean canBeResolved() {
+        return Context.INSTANCE.beanExiste(type);
     }
 }

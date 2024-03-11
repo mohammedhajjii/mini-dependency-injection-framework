@@ -3,5 +3,5 @@ package ma.enset.initializers;
 
 public interface Initializer {
     Object initialize();
-    boolean areAllDependenciesSatisfied();
+    boolean canBeInitialized();
 }

@@ -1,4 +1,4 @@
-package ma.enset.scanner;
+package ma.enset.scanners;
 
 import lombok.Data;
 import ma.enset.annotation.Bean;
@@ -8,7 +8,6 @@ import ma.enset.converters.Converters;
 import ma.enset.resolvers.BeanResolver;
 import ma.enset.resolvers.BeanTypeResolver;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import java.util.Arrays;
 import java.util.Set;

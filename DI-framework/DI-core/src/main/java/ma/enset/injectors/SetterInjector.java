@@ -1,9 +1,9 @@
 package ma.enset.injectors;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import ma.enset.resolvers.BeanResolver;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,11 +20,13 @@ public class SetterInjector implements Injector{
 
 
     @Override
+    @SneakyThrows(ReflectiveOperationException.class)
     public void inject() {
-        try {
-            setter.invoke(instance.resolve(), parameter.resolve());
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        setter.invoke(instance.resolve(), parameter.resolve());
+    }
+
+    @Override
+    public boolean canBeInjected() {
+        return instance.canBeResolved() && parameter.canBeResolved();
     }
 }

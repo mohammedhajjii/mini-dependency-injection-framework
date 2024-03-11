@@ -8,10 +8,10 @@ import ma.enset.dao.IDao;
 @Component
 public class MetierImpl implements IMetier{
     @Inject
-    @Prefer("dao1")
+    @Prefer("dao2")
     private IDao dao;
     @Inject
-    @Prefer("tf")
+    @Prefer("th")
     private Double temp;
 
     public void setDao( IDao dao){

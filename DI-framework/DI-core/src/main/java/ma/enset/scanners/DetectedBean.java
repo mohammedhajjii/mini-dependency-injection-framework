@@ -1,4 +1,4 @@
-package ma.enset.scanner;
+package ma.enset.scanners;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

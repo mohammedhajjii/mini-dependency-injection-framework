@@ -1,9 +1,7 @@
 package ma.enset.initializers;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -14,16 +12,13 @@ public class SimpleConstructorInitializer extends SimpleInitializer{
 
     private Constructor<?> constructor;
     @Override
+    @SneakyThrows(ReflectiveOperationException.class)
     public Object initialize() {
-        try {
-            return constructor.newInstance();
-        } catch (ReflectiveOperationException exception) {
-            throw new RuntimeException(exception);
-        }
+        return constructor.newInstance();
     }
 
     @Override
-    public boolean areAllDependenciesSatisfied() {
+    public boolean canBeInitialized() {
         return true;
     }
 }

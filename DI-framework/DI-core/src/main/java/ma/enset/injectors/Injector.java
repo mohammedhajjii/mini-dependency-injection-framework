@@ -1,7 +1,8 @@
 package ma.enset.injectors;
 
-import java.lang.reflect.InvocationTargetException;
+import lombok.SneakyThrows;
 
 public interface Injector {
     void inject();
+    boolean canBeInjected();
 }

@@ -1,26 +1,17 @@
 package ma.enset;
 
 
-import lombok.Data;
+import ma.enset.core.ApplicationContext;
 import ma.enset.metier.IMetier;
-import ma.enset.repo.Context;
 import ma.enset.resolvers.BeanTypeResolver;
-import ma.enset.strategy.AnnotationStrategy;
-
-import java.sql.Time;
-import java.time.LocalDate;
-import java.util.Date;
+import ma.enset.strategies.AnnotationStrategy;
 
 public class Main {
     public static void main(String[] args) throws Exception {
 
+        ApplicationContext context = new ApplicationContext(new AnnotationStrategy("ma.enset"));
 
-        AnnotationStrategy annotationStrategy = new AnnotationStrategy("ma.enset");
-        annotationStrategy.apply();
-
-
-
-        IMetier iMetier = (IMetier) new BeanTypeResolver(IMetier.class).resolve();
+        IMetier iMetier = (IMetier) context.getBean(IMetier.class);
 
         System.out.println("data: " + iMetier.calculate());
 

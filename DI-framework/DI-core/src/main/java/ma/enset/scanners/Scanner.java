@@ -1,4 +1,4 @@
-package ma.enset.scanner;
+package ma.enset.scanners;
 
 import java.util.Set;
 

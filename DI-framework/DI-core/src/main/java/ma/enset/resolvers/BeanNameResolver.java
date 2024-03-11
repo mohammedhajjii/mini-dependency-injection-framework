@@ -13,13 +13,11 @@ public class BeanNameResolver implements BeanResolver {
 
     @Override
     public Object resolve()  {
-        return Context.INSTANCE.getContext().get(name);
+        return Context.INSTANCE.getBean(name);
     }
 
     @Override
-    public boolean isSatisfied() {
-        return Context.INSTANCE
-                .getContext()
-                .containsKey(name);
+    public boolean canBeResolved() {
+        return Context.INSTANCE.beanExisted(name);
     }
 }
