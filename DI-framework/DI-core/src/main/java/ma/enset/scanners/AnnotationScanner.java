@@ -1,12 +1,11 @@
 package ma.enset.scanners;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import ma.enset.annotation.Bean;
-import ma.enset.annotation.BeansFactory;
-import ma.enset.annotation.Component;
+import ma.enset.annotations.Bean;
+import ma.enset.annotations.BeansFactory;
+import ma.enset.annotations.Component;
 import ma.enset.converters.Converters;
 import ma.enset.resolvers.BeanResolver;
 import ma.enset.resolvers.BeanTypeResolver;

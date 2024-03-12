@@ -2,7 +2,7 @@ package ma.enset.processors;
 
 
 import com.google.auto.service.AutoService;
-import ma.enset.annotation.Bean;
+import ma.enset.annotations.Bean;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;

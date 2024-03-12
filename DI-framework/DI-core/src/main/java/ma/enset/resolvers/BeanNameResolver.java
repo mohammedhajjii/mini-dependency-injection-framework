@@ -3,7 +3,7 @@ package ma.enset.resolvers;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import ma.enset.repo.Context;
+import ma.enset.repository.Context;
 
 @Getter @Setter
 @AllArgsConstructor

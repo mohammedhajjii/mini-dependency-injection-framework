@@ -1,6 +1,6 @@
 package ma.enset.dao;
 
-import ma.enset.annotation.Component;
+import ma.enset.annotations.Component;
 
 @Component("dao1")
 public class DaoImpl implements IDao{

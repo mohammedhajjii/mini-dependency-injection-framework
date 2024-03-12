@@ -1,7 +1,6 @@
 package ma.enset.core;
 
-import lombok.SneakyThrows;
-import ma.enset.repo.Context;
+import ma.enset.repository.Context;
 import ma.enset.strategies.InjectionStrategy;
 
 public class ApplicationContext {

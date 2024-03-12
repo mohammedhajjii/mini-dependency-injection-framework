@@ -1,6 +1,6 @@
 package ma.enset.injectors;
 
-import ma.enset.annotation.Prefer;
+import ma.enset.annotations.Prefer;
 import ma.enset.resolvers.BeanNameResolver;
 import ma.enset.resolvers.BeanResolver;
 import ma.enset.resolvers.BeanTypeResolver;

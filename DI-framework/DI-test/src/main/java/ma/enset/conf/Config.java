@@ -1,7 +1,7 @@
 package ma.enset.conf;
 
-import ma.enset.annotation.Bean;
-import ma.enset.annotation.BeansFactory;
+import ma.enset.annotations.Bean;
+import ma.enset.annotations.BeansFactory;
 
 @BeansFactory
 public class Config {

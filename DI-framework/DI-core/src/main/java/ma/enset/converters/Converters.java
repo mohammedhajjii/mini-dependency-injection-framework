@@ -1,9 +1,9 @@
 package ma.enset.converters;
 
 import lombok.SneakyThrows;
-import ma.enset.annotation.Bean;
-import ma.enset.annotation.Component;
-import ma.enset.annotation.Inject;
+import ma.enset.annotations.Bean;
+import ma.enset.annotations.Component;
+import ma.enset.annotations.Inject;
 import ma.enset.initializers.*;
 import ma.enset.injectors.Injector;
 import ma.enset.injectors.Injectors;

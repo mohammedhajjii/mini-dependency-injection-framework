@@ -2,7 +2,7 @@ package ma.enset.strategies;
 
 import ma.enset.initializers.Initializer;
 import ma.enset.injectors.Injector;
-import ma.enset.repo.Context;
+import ma.enset.repository.Context;
 import ma.enset.resolvers.UnresolvedBean;
 import ma.enset.resolvers.UnresolvedBeanException;
 import ma.enset.scanners.AnnotationScanner;

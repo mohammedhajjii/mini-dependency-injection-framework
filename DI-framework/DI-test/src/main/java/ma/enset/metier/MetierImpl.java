@@ -1,8 +1,8 @@
 package ma.enset.metier;
 
-import ma.enset.annotation.Component;
-import ma.enset.annotation.Inject;
-import ma.enset.annotation.Prefer;
+import ma.enset.annotations.Component;
+import ma.enset.annotations.Inject;
+import ma.enset.annotations.Prefer;
 import ma.enset.dao.IDao;
 
 @Component
