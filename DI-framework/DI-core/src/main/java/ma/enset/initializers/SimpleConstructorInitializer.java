@@ -1,6 +1,7 @@
 package ma.enset.initializers;
 
 import lombok.*;
+import ma.enset.resolvers.UnresolvedBean;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,4 +22,5 @@ public class SimpleConstructorInitializer extends SimpleInitializer{
     public boolean canBeInitialized() {
         return true;
     }
+
 }

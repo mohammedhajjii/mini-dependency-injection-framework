@@ -7,7 +7,8 @@ import ma.enset.resolvers.BeanResolver;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -3,6 +3,8 @@ package ma.enset.initializers;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import ma.enset.resolvers.BeanResolver;
+import ma.enset.resolvers.UnresolvedBean;
+import ma.enset.resolvers.UnresolvedBeans;
 
 import java.lang.reflect.Constructor;
 
@@ -29,5 +31,15 @@ public class ParametricConstructorInitializer extends ParametricInitializer{
         return this.getParameters()
                 .stream()
                 .allMatch(BeanResolver::canBeResolved);
+    }
+
+    @Override
+    public UnresolvedBean findFirstUnresolvedBean() {
+        return this.getParameters()
+                .stream()
+                .filter(param -> !param.canBeResolved())
+                .map(UnresolvedBeans::from)
+                .findAny()
+                .orElse(null);
     }
 }

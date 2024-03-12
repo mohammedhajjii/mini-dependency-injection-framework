@@ -1,6 +1,9 @@
 package ma.enset.scanners;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ma.enset.annotation.Bean;
 import ma.enset.annotation.BeansFactory;
 import ma.enset.annotation.Component;
@@ -14,20 +17,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class AnnotationScanner implements Scanner{
 
-    private Reflections reflection;
-
-    public AnnotationScanner(String ...forPackages) {
-        this.reflection = new Reflections(new ConfigurationBuilder().forPackages(forPackages));
-    }
+    private String[] scannedPackages;
 
     @Override
     public Set<DetectedBean> scan() {
-       Set<Class<?>> beansFactorySet =   reflection.getTypesAnnotatedWith(BeansFactory.class);
+        Reflections reflection = new Reflections(new ConfigurationBuilder().forPackages(scannedPackages));
+        Set<Class<?>> beansFactorySet =   reflection.getTypesAnnotatedWith(BeansFactory.class);
        
-       return Stream.concat(
+        return Stream.concat(
                beansFactorySet.stream()
                        .map(Converters::beanFactoryClassToDetectedBean),
                Stream.concat(
@@ -44,6 +46,6 @@ public class AnnotationScanner implements Scanner{
                                .stream()
                                .map(Converters::componentClassToDetectedBean)
                )
-       ).collect(Collectors.toSet());
+        ).collect(Collectors.toSet());
     }
 }
