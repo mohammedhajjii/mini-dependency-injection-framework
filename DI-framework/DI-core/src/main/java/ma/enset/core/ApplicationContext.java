@@ -5,7 +5,6 @@ import ma.enset.strategies.InjectionStrategy;
 
 public class ApplicationContext {
 
-
     public ApplicationContext(InjectionStrategy  injectionStrategy) {
         injectionStrategy.apply();
     }

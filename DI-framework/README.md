@@ -1,31 +1,38 @@
 # Framework d'injection de dependances basé sur les annotations
 
 ## Le but
-le but de cette partie est de créer un framework comme spring qui permet de faire
-**l'injection des dépendances**, à travers plusieurs **annotations** qu'on a créés.
+Le but de cette partie est de créer un framework comme spring qui permet de faire
+**l'injection des dépendances**, à travers plusieurs **annotations** qu'on a créées.
 
 
 ## La structure de projet
 
-notre projet est divisé sur deux modules:
-* le premier module `DI-core` qui contient l'implementation du framework.
+Notre projet est divisé sur deux modules :
+* le premier module `DI-core` qui contient l'implémentation du framework.
 * le second module `DI-test` pour tester notre solution sur un cas réél.
+
+```xml
+    <modules>
+        <module>DI-core</module>
+        <module>DI-test</module>
+    </modules>
+```
 
 ![project-structure](./images/project-structure.png)
 
 
-## le module DI-core 
+## Module DI-core 
 
-dans ce module on a essayé d'implementer une solution qui permete 
-de faire l'injection des dépendances, ce module est organisé comme ceci:
+Dans ce module, on a essayé d'implémenter une solution qui permet 
+de faire l'injection des dépendances, ce module est organisé comme ceci :
 
 ![DI-core-design](./images/di-core.png)
 
 ### package annotations
-commencant par le package des `annotations`, on a créé plusieurs annotations 
-qui seront détéctés au moment d'éxécution, ces annotations sont :
+Commencant par le package des `annotations`, on a créé plusieurs annotations 
+qui seront détectées au moment d'exécution, ces annotations sont :
 
-* `@Component` : cette annotation est distinée aux classes, que l'on souhaite les instancier, on peut spécifie le nom du bean qui sera créé:
+* `@Component` : cette annotation est destinée aux classes, que l'on souhaite les instancier, on peut spécifier le nom du bean qui sera créé :
 ```java
     @Target(METHOD)
     @Retention(RUNTIME)
@@ -33,9 +40,9 @@ qui seront détéctés au moment d'éxécution, ces annotations sont :
         String value() default "";
     }
 ```
-* `@BeansFactory`: cette annotation est similaire de l'annotation `@Configuration` du **spring** distiniée aux classes, 
-    ces classes vont contient des méthodes spécifique (annoté par `@Bean`) qui vont applés au moment du démarrage de l'application
-    pour créer un nouvean bean,comme **spring** généralement on utilise ce genre d'instanciation pour les classes qui 
+* `@BeansFactory`: cette annotation est similaire de l'annotation `@Configuration` du **spring** s'applique également aux classes, 
+    ces classes vont contient des méthodes spécifiques (annoté par `@Bean`) qui vont applés au moment du démarrage de l'application
+    pour créer des nouveaux beans, En général, on utilise ce genre d'instanciation pour les classes qui 
     sont déja définis et qu'on ne peut pas les ajoutées l'annotation `@Component`.
 ```java
     @Target(TYPE)
@@ -45,9 +52,9 @@ qui seront détéctés au moment d'éxécution, ces annotations sont :
 
 
 ```
-* `@Bean`: équivalent de l'annotation `@Bean` celle de **Spring**, elle permet de créer des beans en exécutant la méthode annoté, 
-    le nom du bean sera le nom passé en paramètre de l'annotation 
-    , sinon le nom du bean sera le nom du méthode , ainsi le type du bean sera le type de retour de la méthode, on peut spécifier le nom du bean:
+* `@Bean`: équivalent de l'annotation `@Bean` celle de **Spring**, elle permet de créer des beans en exécutant la méthode annotée, 
+    le nom du bean sera le nom passé en paramètre de l'annotation, 
+    sinon le nom du bean sera le nom de la méthode, ainsi le type du bean sera le type de retour de la méthode, on peut spécifier le nom du bean :
 ```java
     @Target(METHOD)
     @Retention(RUNTIME)
@@ -59,7 +66,7 @@ qui seront détéctés au moment d'éxécution, ces annotations sont :
 
 * `@inject`: cette annotation permet d'injecter des beans dans les éléments annotés, qui sont :
     - les constructeurs
-    - le attribus
+    - les attribus
     - les setters
 ```java
     @Target({FIELD, CONSTRUCTOR, METHOD})
@@ -82,15 +89,15 @@ qui seront détéctés au moment d'éxécution, ces annotations sont :
 
 ### package repository
 
-dans ce package on a essayé d'implémenter `le pattern singleton` 
-pour avoir une sorte d'une répositorie dans 
-laquelle les notre bean créés seront stocké, on sait bien que 
-la meuilleure facon d'implémenter le pattern singleton se sont des `Enumérations`, car ils ne permettent
-de bien controler le nombre des instances qu'on veut dans notre application:
+Dans ce package, on a essayé d'implémenter `le pattern singleton` 
+pour avoir une sorte d'une base de donnés dans 
+laquelle les beans créés seront stocké, on sait bien que 
+la meilleure facon d'implémenter le modèle singleton ce sont des `Enumérations`, car elles permettent
+de bien controller le nombre des instances qu'on veut dans notre application :
 
 ![Context-enum](./images/repo-pattern.png)
 
-* `INSTANCE`: la seule instance qu'on a crée:
+* `INSTANCE`: la seule instance qu'on a créée :
 * `context`: c'est un attribut de type `Map<String, Object>`:
 ```java
     private final Map<String, Object> context = new ConcurrentHashMap<>();
@@ -101,12 +108,12 @@ de bien controler le nombre des instances qu'on veut dans notre application:
 
 ![resolvers](./images/Resolver-pattern.png)
 
-ce package contient l'interface `BeanResolver`
+Ce package contient l'interface `BeanResolver`
 qui permet de faire la résolution d'un bean à l'aide de son nom, ou son type 
-(trover un bean qui a le meme type ou un sous type de type déclaré)
-,c'est le role de la méthode `resolve`
-,aussi elle permet de tester l'existence d'un bean dans notre repository Context
-,c'est le role de la méthode `canBeResolved`:
+(trouver un bean qui a le meme type ou un sous type de type déclaré), 
+c'est le role de la méthode `resolve`
+,aussi, elle permet de tester l'existence d'un bean dans notre repository Context, 
+c'est le role de la méthode `canBeResolved`:
 
 ```java
     public interface BeanResolver {
@@ -116,24 +123,24 @@ qui permet de faire la résolution d'un bean à l'aide de son nom, ou son type
 ```
 
 
-l'importance de cette interface qu'elle résout le problème d'identification des beans, c'est pour cela on distingue deux
+L'importance de cette interface qu'elle résout le problème d'identification des beans, c'est pour cela, on distingue deux
 implémentations de cette interface :
 * `BeanNameResolver` : qui permet d'identifier un bean a l'aide d'un nom.
 * `BeanTypeResolver`: qui permet d'identifier un bean par un type, on peut accepter n'import
-    qu'il bean de mem type ou d'un sous type:
+    qu'il bean de meme type ou d'un sous type :
 
-l'interface `BeanResolver` est comme un promèsse ou pointeur sur un bean dans `Context Repository`, et lorsqu'on aura
+L'interface `BeanResolver` est comme un promèsse ou pointeur sur un bean dans `Context Repository`, et lorsqu'on aura
 besoin de ce bean et qu'il est disponible (`canBeResolver()` retournera true), il suffit juste d'invoquer `resolve()`
-ces implémentations sont liées directemet à notre `Context Repository`.
+ces implémentations sont liées directement à notre `Context Repository`.
 
-le package contient aussi l'enregistrement `UnresolvedBean` qui est de type `record`, c'est un object immuable
+Le package contient aussi l'enregistrement `UnresolvedBean` qui est de type `record`, c'est un object immuable
 sert juste à stocker la raison pour laquelle le bean n'est pas résolu :
 
 ```java
     public record UnresolvedBean(String raison) {}
 ```
 
-la classe `UnresolvedBeans` est une classe `Factory` qui permit de convertir un `BeanResolver` vers une instance de type 
+La classe `UnresolvedBeans` est une classe `Factory` qui permit de convertir un `BeanResolver` vers une instance de type 
 `UnresolvedBean`:
 
 
@@ -151,7 +158,7 @@ public class UnresolvedBeans {
 }
 ```
 
-`UnresolvedBeanException` est une classe aui modelise l'exception qui sera jete si le bean n'est pas trouve au cours d'initialiser ou d'injection des autres bean dont qu'ils depends:
+`UnresolvedBeanException` est une classe aui modelise l'exception qui sera jete si le bean n'est pas trouvé au cours d'initialiser ou d'injection des autres bean dont qu'ils dépendent :
 ```java
     public class UnresolvedBeanException extends RuntimeException{
     
@@ -165,74 +172,228 @@ public class UnresolvedBeans {
 
 ### packages injectors
 
-ce package contient :
+Ce package contient :
 
 ![injectors](./images/injector-pattern.png)
 
-* l'interface `Injector` permet de modeliser l'action d'injection d'un 
-    bean dans un champs specifique, a travers un setter ou injection par attribut (field)
+* l'interface `Injector` permet de modéliser l'action d'injection d'un 
+    bean dans un champ specifique, à travers un setter ou injection par attribut (field)
 
-  cette interface dispose des methodes suivantes :
+  cette interface dispose des méthodes suivantes :
     - `inject` : injecter un bean dans un `champs`.
-    - `canBeInjected` : verifie si la dependance est satisfaite, c'est a dire que le bean que l'on veut l'injecte est existe au niveau du `Context` repository.
+    - `canBeInjected` : vérifie si la dépendance est satisfaite, c'est-a-dire que le bean que l'on veut l'injecter est existé au niveau du `Context` repository.
     - `findFirstUnresolvedBean` : permet de retourner le premier bean qui n'existe pas dans le `Context` repo, encapsuler d'un enregistrement `UnresolvedBean`.
 
-pour reqliser cette interface on a cree deux implementations :
-* `FieldInjector` : qui modelise l'injection par attribut.
-* `SetterInjector` : qui modelise l'injection par setter.
+Pour reqliser cette interface, on a cree deux implementations :
+* `FieldInjector` : qui modélise l'injection par attribut.
+* `SetterInjector` : qui modélise l'injection par setter.
 
-dans ce package aussi on dispose de la classe factory `Injectors` qui permet de creer un des object de type `Injector` 
-on lui fourni des parametres qui convients.
+Dans ce package aussi, on dispose de la classe factory `Injectors` qui permet de creer un des object de type `Injector` 
+on lui fournit des paramètres qui conviennent.
 
 
 ### package initializer
 
 ![initializer](./images/intializer-pattern.png)
 
-on a dit que le package `injectors` est mise en place pour implementer l'injection par setter ou par attribut (Field),
-d'abord il faut comprendre une chose, ce que l'injection par setter ou par attribut s'effectues apres l'initialisation du bean,
-est c'est tres facile a faire si les beans a injectes sont tous pretes, mais le probleme se provoque si l'injection se faite via
-un constructeur (ou une methode annotee par l'annotation `@Bean`), pour cela on a utilise le pattern ullistre dans le diagramme de classe 
+On a dit que le package `injectors` est mise en place pour implementer l'injection par setter ou par attribut (Field),
+d'abord, il faut comprendre une chose, ce que l'injection par setter ou par attribut s'effectue apres l'initialisation du bean,
+est tres facile à faire si les beans à injecter sont tous prêts, mais le probleme se provoque si l'injection se faite via
+un constructeur (ou une methode annotée par l'annotation `@Bean`), pour cela, on a utilisé le modèle illustré dans le diagramme de classe 
 precedent.
 
-* `Initializer` : est une interface qui modelise l'injection des dependences au moment de l'initialisation des classes via la methode `initialize`,
-    la methode `canBeInitialized` c'est pour verifier est-ce que tous les dependences sont bien etablis ou pas,
-    la methode `findFirstUnresolvedBean` a pour effet comme celle des injecteurs (definit dans l'interface `Injector`).
-* pour la realisation de ctte interface, on distingue deux types d'implemetations :
-    - `SimpleInitializer` : classe abstraite qui reflete les constructeurs sans parametres et qui ont annoté par `@Inject`, ou les methodes annotees par `@Bean` definitis dans les classes annotees 
-        par l'annotation `@BeansFactory` et qui ne reçoivent aucune parametres.
-        on a distingue deux types des initialisateurs sinples : `SimpleConstructorInitializer` et `SimpleMethodInitializer`.
-    - `ParametricInitializer` : aussi, c'est une classe abstraite, et comme son nom montre, il diffère a `SimpleInitializer` par la presence d'une ensemble des parametres.
-        on a distingué deux types des initialisateurs parametriques : `ParametricConstructorInitializer` et `ParametricMethodInitializer`.
+* `Initializer` : est une interface qui modélise l'injection des dépendances au moment de l'initialisation des classes via la methode `initialize`,
+    la methode `canBeInitialized` c'est pour vérifier est-ce que toutes les dépendances sont bien établis ou pas,
+    la methode `findFirstUnresolvedBean` a pour effet comme celle des injecteurs (définit dans l'interface `Injector`).
+* pour la realisation de cette interface, on distingue deux types d'implémentation :
+    - `SimpleInitializer` : classe abstraite qui reflète les constructeurs sans paramètres et qui ont annoté par `@Inject`, ou les méthodes annotées par `@Bean` définissant dans les classes annotées 
+        par l'annotation `@BeansFactory` et qui ne reçoivent aucun paramètre.
+        on a distingué deux types des initialisations simples : `SimpleConstructorInitializer` et `SimpleMethodInitializer`.
+    - `ParametricInitializer` : aussi, c'est une classe abstraite, et comme son nom montre, il diffère a `SimpleInitializer` par la presence d'un ensemble des paramètres.
+        on a distingué deux types des initialisations paramétriques : `ParametricConstructorInitializer` et `ParametricMethodInitializer`.
 
-* `Initalizers` : est une classe factory pour parser un intitalizer à partir des classes et des méthodes annotées.
+* `Initalizers` : est une classe factory pour parser un initializer à partir des classes et des méthodes annotées.
 
 
 ### package scanners
 
 ![scanners](./images/scanner-pattern.png)
 
-pour le scanning on a utilise l'outil `Reflections` fourni par la dependance :
+* `DetectedBean` : c'est la classe qui modélise un bean qui est détecté au moment du scanning :
 
+    ![DetectedBean](./images/detectedBean.png)
+
+    - `specifiedName` : le nom passé paramètre du `@Component`, sinon le nom de la classe annoté par `@Component` décapitalisé
+      ou le nom spécifié en paramètre du `@Bean`, sinon le nom de la méthode annotée  `@Bean`.
+    - `initializer` : constructeur ou une méthode qui permet de cree un objet qui représente le bean.
+    -  `injectorSet` : l'ensemble des injections à faire après l'initialisation du bean.
+
+
+* L'interface `Scanner` qui fourni la méthode `scan` qui permet de faire le scanning en cherchant des beans à instancier, ou à l'injecter,
+la méthode `scan` nous retourne une `Set<DetectedBean>` l'ensemble des beans détectés.
+pour la réalisation de cette interface, on peut créer deux implémentations :
+  -`AnnotationScanner` : qui parcourt l'ensemble des packages à scanner qui seront precisés par l'attribut `scannedPackages`, 
+      pour le scanning, on a utilisé l'outil `Reflections` fourni par la dépendance :
 ```xml
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
-        </dependency>
+      <dependency>
+          <groupId>org.reflections</groupId>
+          <artifactId>reflections</artifactId>
+          <version>0.10.2</version>
+      </dependency>
 ```
-
+   - par extension (**car notre implémentation est fermée à la modification est ouverte à l'extension**) en peut ajouter une implémentation de `XMLScanner` qui va dépendre d'un fichier XML, dans lequel on a défini
+        l'ensemble des beans a créé et injecté.
+    
 ### package strategies
 
 ![strategies](./images/strategy-pattern.png)
 
+* `InjectionStrategy` : représente la stratégie utilisée pour efféctuer l'injection des dépendances
+    il contient la méthode `apply`, qui lance le process de la stratégie.
+
+On peut distinguer deux stratégies d'injection des dépendances :
+* `AnnotationStrategy` : le scan va utiliser un scanner de type `AnnotationScanner`.
+* `XMLStrategy` : le scan va utiliser un scanner de type `XMLScanner`.
+
 ### package converters
 
 ![converters](./images/converts-pattern.png)
+ C'est une classe Factory qui permet de convertir des classes et des méthodes annotées qui sont détectées au moment du scan,
+    les convertir en `DetectedBean` objet.
+
 ### package core
 
 ![core](./images/application-context.png)
 
-    
+`ApplicationContext` : c'est le point d'entrée pour avoir utilisé notre solution, qui utilise une 
+    `InjectionStrategy`, et qui fourni deux méthodes surchargées : `getBean` par nom ou par type.
 
 
+
+## Module DI-test
+
+Dans ce module, on a créé un test pour notre solution d'injection des dépendances.
+Commencant par ajouter la dépendance au module `DI-core` :
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>ma.enset</groupId>
+            <artifactId>DI-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+```
+
+La structure de module est très simple :
+
+![di-test](./images/di-test.png)
+
+* dans la classe `Conifg` on a :
+```java
+        @BeansFactory
+        public class Config {
+        
+            @Bean("ti")
+            public double initialTemp(){
+                return 1000.;
+            }
+        
+            @Bean("tf")
+            public double finalTemp(){
+                return 50000.;
+            }
+        }
+
+   ```
+
+  * dans le package Dao, on a créé deux implémentations de l'interface `IDao`:
+      - `IDao` : 
+```java
+            public interface IDao {
+                double getData();
+            }
+```
+        
+      - `DaoImpl` :
+```java
+          @Component("dao1")
+          public class DaoImpl implements IDao{
+            @Override
+            public double getData() {
+              System.out.println("dao version 1");
+              return 100;
+            }
+          }
+```
+      - `DaoImplV2` : 
+```java
+        @Component("dao2")
+        public class DaoImplV2 implements IDao{
+            @Override
+            public double getData() {
+                System.out.println("dao version 2");
+                return 200;
+            }
+        }
+```
+
+
+* dans le package metier :
+
+    - `IMetier` : 
+```java
+public interface IMetier {
+    double calculate();
+}
+```
+
+    - `MetierImpl` :
+```java
+@Component
+public class MetierImpl implements IMetier{
+    @Inject
+    @Prefer("dao2")
+    private IDao dao;
+    @Inject
+    @Prefer("ti")
+    private Double temp;
+
+    public void setDao( IDao dao){
+        this.dao = dao;
+    }
+
+    @Override
+    public double calculate() {
+        return dao.getData() * temp;
+    }
+}
+
+```
+
+* dans l'interface `Main` de notre application :
+
+```java
+public interface Main {
+     static void main(String[] args) {
+
+        ApplicationContext context = new ApplicationContext(new AnnotationStrategy("ma.enset"));
+
+        IMetier iMetier = (IMetier) context.getBean(IMetier.class);
+        System.out.println("data: " + iMetier.calculate());
+
+    }
+}
+```
+
+* Le résultat est :
+
+![result](./images/result.png)
+
+* Vérification : 
+    - pour le bean temp dans la classe `MetierImpl` on a favorisé le bean `ti`.
+    - pour le bean dao dans la classe `MetierImpl` on a privilégié le bean `dao2`.
+    - le bean `ti` est de type Double contient la valeur 1000
+    - la méthode `getData` renvoie la valeur 200 pour le bean `dao2`
+    - est donc 1000 * 200 = 200_000
