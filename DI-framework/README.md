@@ -25,7 +25,7 @@ de faire l'injection des dépendances, ce module est organisé comme ceci:
 commencant par le package des `annotations`, on a créé plusieurs annotations 
 qui seront détéctés au moment d'éxécution, ces annotations sont :
 
-* `@Component` : cette annotation est distinée aux classes, que l'on souhaite l'instancier, on peut spécifie le nom au bean créé:
+* `@Component` : cette annotation est distinée aux classes, que l'on souhaite les instancier, on peut spécifie le nom du bean qui sera créé:
 ```java
     @Target(METHOD)
     @Retention(RUNTIME)
@@ -100,4 +100,139 @@ de bien controler le nombre des instances qu'on veut dans notre application:
 ### package resolvers
 
 ![resolvers](./images/Resolver-pattern.png)
+
+ce package contient l'interface `BeanResolver`
+qui permet de faire la résolution d'un bean à l'aide de son nom, ou son type 
+(trover un bean qui a le meme type ou un sous type de type déclaré)
+,c'est le role de la méthode `resolve`
+,aussi elle permet de tester l'existence d'un bean dans notre repository Context
+,c'est le role de la méthode `canBeResolved`:
+
+```java
+    public interface BeanResolver {
+        Object resolve();
+        boolean canBeResolved();
+    }
+```
+
+
+l'importance de cette interface qu'elle résout le problème d'identification des beans, c'est pour cela on distingue deux
+implémentations de cette interface :
+* `BeanNameResolver` : qui permet d'identifier un bean a l'aide d'un nom.
+* `BeanTypeResolver`: qui permet d'identifier un bean par un type, on peut accepter n'import
+    qu'il bean de mem type ou d'un sous type:
+
+l'interface `BeanResolver` est comme un promèsse ou pointeur sur un bean dans `Context Repository`, et lorsqu'on aura
+besoin de ce bean et qu'il est disponible (`canBeResolver()` retournera true), il suffit juste d'invoquer `resolve()`
+ces implémentations sont liées directemet à notre `Context Repository`.
+
+le package contient aussi l'enregistrement `UnresolvedBean` qui est de type `record`, c'est un object immuable
+sert juste à stocker la raison pour laquelle le bean n'est pas résolu :
+
+```java
+    public record UnresolvedBean(String raison) {}
+```
+
+la classe `UnresolvedBeans` est une classe `Factory` qui permit de convertir un `BeanResolver` vers une instance de type 
+`UnresolvedBean`:
+
+
+```java
+
+public class UnresolvedBeans {
+    private static String UNRESOLVED_BEAN_NAME = "unresolved bean with name: ";
+    private static String UNRESOLVED_BEAN_TYPE = "unresolved bean with type: ";
+
+    public static UnresolvedBean from(BeanResolver beanResolver){
+        if (beanResolver instanceof BeanNameResolver beanNameResolver)
+            return new UnresolvedBean(UNRESOLVED_BEAN_NAME + beanNameResolver.getName());
+        return new UnresolvedBean(UNRESOLVED_BEAN_TYPE + ((BeanTypeResolver) beanResolver).getType().getName());
+    }
+}
+```
+
+`UnresolvedBeanException` est une classe aui modelise l'exception qui sera jete si le bean n'est pas trouve au cours d'initialiser ou d'injection des autres bean dont qu'ils depends:
+```java
+    public class UnresolvedBeanException extends RuntimeException{
+    
+        public UnresolvedBeanException(UnresolvedBean unresolvedBean) {
+            super(unresolvedBean.raison());
+        }
+    }
+
+```
+
+
+### packages injectors
+
+ce package contient :
+
+![injectors](./images/injector-pattern.png)
+
+* l'interface `Injector` permet de modeliser l'action d'injection d'un 
+    bean dans un champs specifique, a travers un setter ou injection par attribut (field)
+
+  cette interface dispose des methodes suivantes :
+    - `inject` : injecter un bean dans un `champs`.
+    - `canBeInjected` : verifie si la dependance est satisfaite, c'est a dire que le bean que l'on veut l'injecte est existe au niveau du `Context` repository.
+    - `findFirstUnresolvedBean` : permet de retourner le premier bean qui n'existe pas dans le `Context` repo, encapsuler d'un enregistrement `UnresolvedBean`.
+
+pour reqliser cette interface on a cree deux implementations :
+* `FieldInjector` : qui modelise l'injection par attribut.
+* `SetterInjector` : qui modelise l'injection par setter.
+
+dans ce package aussi on dispose de la classe factory `Injectors` qui permet de creer un des object de type `Injector` 
+on lui fourni des parametres qui convients.
+
+
+### package initializer
+
+![initializer](./images/intializer-pattern.png)
+
+on a dit que le package `injectors` est mise en place pour implementer l'injection par setter ou par attribut (Field),
+d'abord il faut comprendre une chose, ce que l'injection par setter ou par attribut s'effectues apres l'initialisation du bean,
+est c'est tres facile a faire si les beans a injectes sont tous pretes, mais le probleme se provoque si l'injection se faite via
+un constructeur (ou une methode annotee par l'annotation `@Bean`), pour cela on a utilise le pattern ullistre dans le diagramme de classe 
+precedent.
+
+* `Initializer` : est une interface qui modelise l'injection des dependences au moment de l'initialisation des classes via la methode `initialize`,
+    la methode `canBeInitialized` c'est pour verifier est-ce que tous les dependences sont bien etablis ou pas,
+    la methode `findFirstUnresolvedBean` a pour effet comme celle des injecteurs (definit dans l'interface `Injector`).
+* pour la realisation de ctte interface, on distingue deux types d'implemetations :
+    - `SimpleInitializer` : classe abstraite qui reflete les constructeurs sans parametres et qui ont annoté par `@Inject`, ou les methodes annotees par `@Bean` definitis dans les classes annotees 
+        par l'annotation `@BeansFactory` et qui ne reçoivent aucune parametres.
+        on a distingue deux types des initialisateurs sinples : `SimpleConstructorInitializer` et `SimpleMethodInitializer`.
+    - `ParametricInitializer` : aussi, c'est une classe abstraite, et comme son nom montre, il diffère a `SimpleInitializer` par la presence d'une ensemble des parametres.
+        on a distingué deux types des initialisateurs parametriques : `ParametricConstructorInitializer` et `ParametricMethodInitializer`.
+
+* `Initalizers` : est une classe factory pour parser un intitalizer à partir des classes et des méthodes annotées.
+
+
+### package scanners
+
+![scanners](./images/scanner-pattern.png)
+
+pour le scanning on a utilise l'outil `Reflections` fourni par la dependance :
+
+```xml
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
+```
+
+### package strategies
+
+![strategies](./images/strategy-pattern.png)
+
+### package converters
+
+![converters](./images/converts-pattern.png)
+### package core
+
+![core](./images/application-context.png)
+
+    
+
 
