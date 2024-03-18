@@ -306,71 +306,71 @@ La structure de module est très simple :
             }
         }
 
-   ```
+```
 
   * dans le package Dao, on a créé deux implémentations de l'interface `IDao`:
-      - `IDao` : 
-```java
-            public interface IDao {
-                double getData();
-            }
-```
+    - `IDao` : 
+        ```java
+                    public interface IDao {
+                        double getData();
+                    }
+        ```
         
-      - `DaoImpl` :
-```java
-          @Component("dao1")
-          public class DaoImpl implements IDao{
-            @Override
-            public double getData() {
-              System.out.println("dao version 1");
-              return 100;
-            }
-          }
-```
-      - `DaoImplV2` : 
-```java
-        @Component("dao2")
-        public class DaoImplV2 implements IDao{
-            @Override
-            public double getData() {
-                System.out.println("dao version 2");
-                return 200;
-            }
-        }
-```
+    - `DaoImpl` :
+        ```java
+                  @Component("dao1")
+                  public class DaoImpl implements IDao{
+                    @Override
+                    public double getData() {
+                      System.out.println("dao version 1");
+                      return 100;
+                    }
+                  }
+        ```
+    - `DaoImplV2` : 
+        ```java
+                @Component("dao2")
+                public class DaoImplV2 implements IDao{
+                    @Override
+                    public double getData() {
+                        System.out.println("dao version 2");
+                        return 200;
+                    }
+                }
+        ```
 
 
 * dans le package metier :
 
     - `IMetier` : 
-```java
-public interface IMetier {
-    double calculate();
-}
-```
+        ```java
+        public interface IMetier {
+            double calculate();
+        }
+        ```
 
     - `MetierImpl` :
-```java
-@Component
-public class MetierImpl implements IMetier{
-    @Inject
-    @Prefer("dao2")
-    private IDao dao;
-    @Inject
-    @Prefer("ti")
-    private Double temp;
-
-    public void setDao( IDao dao){
-        this.dao = dao;
-    }
-
-    @Override
-    public double calculate() {
-        return dao.getData() * temp;
-    }
-}
-
-```
+        ```java
+        @Component
+        public class MetierImpl implements IMetier{
+            @Inject
+            @Prefer("dao2")
+            private IDao dao;
+            @Inject
+            @Prefer("ti")
+            private Double temp;
+        
+            public void setDao( IDao dao){
+                this.dao = dao;
+            }
+        
+            @Override
+            public double calculate() {
+                return dao.getData() * temp;
+            }
+        }
+        
+        ```
 
 * dans l'interface `Main` de notre application :
 
