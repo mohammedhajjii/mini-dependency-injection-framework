@@ -9,5 +9,5 @@ l'injection en utilisant le framework spring avec 2 strategies (XML et annotatio
 ### partie 2 : developpement d'un framework d'injection des dépendances
 
 
-[documentation](https://github.com/mohammedhajjii/TP1/blob/coding/DI-framework/README.md "DI-FRAMEWORK")
+[documentation du framwork](https://github.com/mohammedhajjii/TP1/blob/coding/DI-framework/README.md "DI-FRAMEWORK")
 
